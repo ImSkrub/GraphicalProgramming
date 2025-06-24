@@ -1,0 +1,11 @@
+fileFormatVersion: 2
+guid: 9f63124d2944c8246ab799245d5cc491
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures:
+  - _TextureSample0: {fileID: 2800000, guid: 083c0f838d8a4f34d9f134c9342e2364, type: 3}
+  - _earth_landocean_4K: {fileID: 2800000, guid: af740dd3f2302884fabc9172007e72d6, type: 3}
+  nonModifiableTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
