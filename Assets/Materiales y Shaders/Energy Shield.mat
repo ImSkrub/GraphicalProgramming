@@ -68,7 +68,7 @@ Material:
     - _Speed: 0.2
     - __dirty: 0
     m_Colors:
-    - _Edgecolor: {r: 1, g: 0.3820239, b: 0, a: 0}
+    - _Edgecolor: {r: 1, g: 0.38202387, b: 0, a: 0}
     - _Hexcolor: {r: 1, g: 0.7276479, b: 0, a: 0}
     - _PannerSpeed: {r: 1, g: 0, b: 0, a: 0}
     - _StepRange: {r: 0.05, g: 1, b: 0, a: 0}
