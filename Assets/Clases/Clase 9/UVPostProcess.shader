@@ -4,6 +4,7 @@ Shader "UVPostProcess"
 {
 	Properties
 	{
+		_MainTex ( "Screen", 2D ) = "black" {}
 		_MiTextura("MiTextura", 2D) = "white" {}
 		_Intensity("Intensity", Float) = 0
 
@@ -13,39 +14,42 @@ Shader "UVPostProcess"
 	{
 		LOD 0
 
+		
+		
+		ZTest Always
 		Cull Off
 		ZWrite Off
-		ZTest Always
+
 		
 		Pass
-		{
-			CGPROGRAM
+		{ 
+			CGPROGRAM 
 
 			
 
-			#pragma vertex Vert
-			#pragma fragment Frag
+			#pragma vertex vert_img_custom 
+			#pragma fragment frag
 			#pragma target 3.0
-
 			#include "UnityCG.cginc"
 			#include "UnityShaderVariables.cginc"
 
-		
-			struct ASEAttributesDefault
+
+			struct appdata_img_custom
 			{
-				float3 vertex : POSITION;
-				float2 texcoord : TEXCOORD0;
+				float4 vertex : POSITION;
+				half2 texcoord : TEXCOORD0;
 				
 			};
 
-			struct ASEVaryingsDefault
+			struct v2f_img_custom
 			{
-				float4 vertex : SV_POSITION;
-				float2 texcoord : TEXCOORD0;
-				float2 texcoordStereo : TEXCOORD1;
-			#if STEREO_INSTANCING_ENABLED
-				uint stereoTargetEyeIndex : SV_RenderTargetArrayIndex;
-			#endif
+				float4 pos : SV_POSITION;
+				half2 uv   : TEXCOORD0;
+				half2 stereoUV : TEXCOORD2;
+		#if UNITY_UV_STARTS_AT_TOP
+				half4 uv2 : TEXCOORD1;
+				half4 stereoUV2 : TEXCOORD3;
+		#endif
 				
 			};
 
@@ -57,45 +61,47 @@ Shader "UVPostProcess"
 			uniform float _Intensity;
 
 
-			
-			float2 TransformTriangleVertexToUV (float2 vertex)
+			v2f_img_custom vert_img_custom ( appdata_img_custom v  )
 			{
-				float2 uv = (vertex + 1.0) * 0.5;
-				return uv;
-			}
-
-			ASEVaryingsDefault Vert( ASEAttributesDefault v  )
-			{
-				ASEVaryingsDefault o;
-				o.vertex = float4(v.vertex.xy, 0.0, 1.0);
-				o.texcoord = TransformTriangleVertexToUV (v.vertex.xy);
-#if UNITY_UV_STARTS_AT_TOP
-				o.texcoord = o.texcoord * float2(1.0, -1.0) + float2(0.0, 1.0);
-#endif
-				o.texcoordStereo = TransformStereoScreenSpaceTex (o.texcoord, 1.0);
-
-				v.texcoord = o.texcoordStereo;
-				float4 ase_ppsScreenPosVertexNorm = float4(o.texcoordStereo,0,1);
-
+				v2f_img_custom o;
 				
+				o.pos = UnityObjectToClipPos( v.vertex );
+				o.uv = float4( v.texcoord.xy, 1, 1 );
 
+				#if UNITY_UV_STARTS_AT_TOP
+					o.uv2 = float4( v.texcoord.xy, 1, 1 );
+					o.stereoUV2 = UnityStereoScreenSpaceUVAdjust ( o.uv2, _MainTex_ST );
+
+					if ( _MainTex_TexelSize.y < 0.0 )
+						o.uv.y = 1.0 - o.uv.y;
+				#endif
+				o.stereoUV = UnityStereoScreenSpaceUVAdjust ( o.uv, _MainTex_ST );
 				return o;
 			}
 
-			float4 Frag (ASEVaryingsDefault i  ) : SV_Target
+			half4 frag ( v2f_img_custom i ) : SV_Target
 			{
-				float4 ase_ppsScreenPosFragNorm = float4(i.texcoordStereo,0,1);
+				#ifdef UNITY_UV_STARTS_AT_TOP
+					half2 uv = i.uv2;
+					half2 stereoUV = i.stereoUV2;
+				#else
+					half2 uv = i.uv;
+					half2 stereoUV = i.stereoUV;
+				#endif	
+				
+				half4 finalColor;
 
-				float2 texCoord3 = i.texcoord.xy * float2( 1,1 ) + float2( 0,0 );
+				// ase common template code
+				float2 texCoord3 = i.uv.xy * float2( 1,1 ) + float2( 0,0 );
 				float2 panner4 = ( 1.0 * _Time.y * float2( 0.1,0.1 ) + texCoord3);
 				float4 lerpResult6 = lerp( float4( texCoord3, 0.0 , 0.0 ) , tex2D( _MiTextura, panner4 ) , _Intensity);
 				
 
-				float4 color = tex2D( _MainTex, lerpResult6.rg );
-				
-				return color;
-			}
-			ENDCG
+				finalColor = tex2D( _MainTex, lerpResult6.rg );
+
+				return finalColor;
+			} 
+			ENDCG 
 		}
 	}
 	CustomEditor "ASEMaterialInspector"
@@ -104,15 +110,15 @@ Shader "UVPostProcess"
 }
 /*ASEBEGIN
 Version=18900
-0;570;1512;416;2236.779;311.4216;1.680956;True;False
+8;567;1333;424;1693.061;332.9629;1.3;True;False
 Node;AmplifyShaderEditor.TextureCoordinatesNode;3;-1464,-117.5;Inherit;False;0;-1;2;3;2;SAMPLER2D;;False;0;FLOAT2;1,1;False;1;FLOAT2;0,0;False;5;FLOAT2;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
 Node;AmplifyShaderEditor.PannerNode;4;-1237,55.5;Inherit;False;3;0;FLOAT2;0,0;False;2;FLOAT2;0.1,0.1;False;1;FLOAT;1;False;1;FLOAT2;0
 Node;AmplifyShaderEditor.RangedFloatNode;7;-879.2024,227.4198;Inherit;False;Property;_Intensity;Intensity;1;0;Create;True;0;0;0;False;0;False;0;0;0;0;0;1;FLOAT;0
-Node;AmplifyShaderEditor.SamplerNode;5;-1010.8,20;Inherit;True;Property;_MiTextura;MiTextura;0;0;Create;True;0;0;0;False;0;False;-1;c59af09b12b230740b5d037ae0d0bb24;None;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;8;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;6;FLOAT;0;False;7;SAMPLERSTATE;;False;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
-Node;AmplifyShaderEditor.TemplateShaderPropertyNode;1;-599,-155.5;Inherit;False;0;0;_MainTex;Shader;False;0;5;SAMPLER2D;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
-Node;AmplifyShaderEditor.LerpOp;6;-638.2024,-81.5802;Inherit;False;3;0;COLOR;0,0,0,0;False;1;COLOR;0,0,0,0;False;2;FLOAT;0;False;1;COLOR;0
+Node;AmplifyShaderEditor.SamplerNode;5;-1010.8,20;Inherit;True;Property;_MiTextura;MiTextura;0;0;Create;True;0;0;0;False;0;False;-1;None;None;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;8;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;6;FLOAT;0;False;7;SAMPLERSTATE;;False;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
+Node;AmplifyShaderEditor.TemplateShaderPropertyNode;1;-790,-227.5;Inherit;False;0;0;_MainTex;Shader;False;0;5;SAMPLER2D;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
+Node;AmplifyShaderEditor.LerpOp;6;-636.2024,-15.5802;Inherit;False;3;0;COLOR;0,0,0,0;False;1;COLOR;0,0,0,0;False;2;FLOAT;0;False;1;COLOR;0
 Node;AmplifyShaderEditor.SamplerNode;2;-413,-154.5;Inherit;True;Property;_TextureSample0;Texture Sample 0;0;0;Create;True;0;0;0;False;0;False;-1;None;None;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;8;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;6;FLOAT;0;False;7;SAMPLERSTATE;;False;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
-Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;8;-5,-101;Float;False;True;-1;2;ASEMaterialInspector;0;14;UVPostProcess;32139be9c1eb75640a847f011acf3bcf;True;SubShader 0 Pass 0;0;0;SubShader 0 Pass 0;1;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;2;False;-1;False;False;False;False;False;False;False;False;False;False;False;True;2;False;-1;True;7;False;-1;False;False;False;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;2;0;;0;0;Standard;0;0;1;True;False;;False;0
+Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;10;-46.59999,-143.9001;Float;False;True;-1;2;ASEMaterialInspector;0;2;UVPostProcess;c71b220b631b6344493ea3cf87110c93;True;SubShader 0 Pass 0;0;0;SubShader 0 Pass 0;1;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;2;False;-1;False;False;False;False;False;False;False;False;False;False;False;True;2;False;-1;True;7;False;-1;False;True;0;False;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;2;0;;0;0;Standard;0;0;1;True;False;;False;0
 WireConnection;4;0;3;0
 WireConnection;5;1;4;0
 WireConnection;6;0;3;0
@@ -120,6 +126,6 @@ WireConnection;6;1;5;0
 WireConnection;6;2;7;0
 WireConnection;2;0;1;0
 WireConnection;2;1;6;0
-WireConnection;8;0;2;0
+WireConnection;10;0;2;0
 ASEEND*/
-//CHKSM=13D5012CEDFF38626251D4A9E6F6B76B21228ED6
+//CHKSM=C3E8536AC0995CAF98DD11825D50224BABBB201D

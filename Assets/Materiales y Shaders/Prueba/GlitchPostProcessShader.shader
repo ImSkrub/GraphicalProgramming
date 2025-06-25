@@ -1,11 +1,19 @@
 // Made with Amplify Shader Editor
 // Available at the Unity Asset Store - http://u3d.as/y3X 
-Shader "Hidden/Custom/GlitchEffect"
+Shader "GlitchEffectPostProcess"
 {
 	Properties
 	{
 		_MainTex ( "Screen", 2D ) = "black" {}
-		
+		_NoiseTimeScale("Noise Time Scale", Range( 0 , 2)) = 1
+		_ScreenBlend("Screen Blend", Range( 0 , 1)) = 0
+		_TimeMult("Time Mult", Float) = 4
+		_NoiseScale("Noise Scale", Float) = 10
+		_Flickeringmult("Flickering mult", Float) = 3
+		_FlickerTimescale("Flicker Time scale", Float) = 1
+		_ModFlickereffect("Mod Flicker effect", Range( 0 , 1)) = 0.3529412
+		[HideInInspector] _texcoord( "", 2D ) = "white" {}
+
 	}
 
 	SubShader
@@ -18,18 +26,12 @@ Shader "Hidden/Custom/GlitchEffect"
 		Cull Off
 		ZWrite Off
 
-		GrabPass{ }
-
+		
 		Pass
 		{ 
 			CGPROGRAM 
 
-			#if defined(UNITY_STEREO_INSTANCING_ENABLED) || defined(UNITY_STEREO_MULTIVIEW_ENABLED)
-			#define ASE_DECLARE_SCREENSPACE_TEXTURE(tex) UNITY_DECLARE_SCREENSPACE_TEXTURE(tex);
-			#else
-			#define ASE_DECLARE_SCREENSPACE_TEXTURE(tex) UNITY_DECLARE_SCREENSPACE_TEXTURE(tex)
-			#endif
-
+			
 
 			#pragma vertex vert_img_custom 
 			#pragma fragment frag
@@ -61,7 +63,41 @@ Shader "Hidden/Custom/GlitchEffect"
 			uniform half4 _MainTex_TexelSize;
 			uniform half4 _MainTex_ST;
 			
-			ASE_DECLARE_SCREENSPACE_TEXTURE( _GrabTexture )
+			uniform float _NoiseTimeScale;
+			uniform float _TimeMult;
+			uniform float _NoiseScale;
+			uniform float _FlickerTimescale;
+			uniform float _Flickeringmult;
+			uniform float _ModFlickereffect;
+			uniform float _ScreenBlend;
+			float3 mod2D289( float3 x ) { return x - floor( x * ( 1.0 / 289.0 ) ) * 289.0; }
+			float2 mod2D289( float2 x ) { return x - floor( x * ( 1.0 / 289.0 ) ) * 289.0; }
+			float3 permute( float3 x ) { return mod2D289( ( ( x * 34.0 ) + 1.0 ) * x ); }
+			float snoise( float2 v )
+			{
+				const float4 C = float4( 0.211324865405187, 0.366025403784439, -0.577350269189626, 0.024390243902439 );
+				float2 i = floor( v + dot( v, C.yy ) );
+				float2 x0 = v - i + dot( i, C.xx );
+				float2 i1;
+				i1 = ( x0.x > x0.y ) ? float2( 1.0, 0.0 ) : float2( 0.0, 1.0 );
+				float4 x12 = x0.xyxy + C.xxzz;
+				x12.xy -= i1;
+				i = mod2D289( i );
+				float3 p = permute( permute( i.y + float3( 0.0, i1.y, 1.0 ) ) + i.x + float3( 0.0, i1.x, 1.0 ) );
+				float3 m = max( 0.5 - float3( dot( x0, x0 ), dot( x12.xy, x12.xy ), dot( x12.zw, x12.zw ) ), 0.0 );
+				m = m * m;
+				m = m * m;
+				float3 x = 2.0 * frac( p * C.www ) - 1.0;
+				float3 h = abs( x ) - 0.5;
+				float3 ox = floor( x + 0.5 );
+				float3 a0 = x - ox;
+				m *= 1.79284291400159 - 0.85373472095314 * ( a0 * a0 + h * h );
+				float3 g;
+				g.x = a0.x * x0.x + h.x * x0.y;
+				g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+				return 130.0 * dot( m, g );
+			}
+			
 
 
 			v2f_img_custom vert_img_custom ( appdata_img_custom v  )
@@ -98,14 +134,26 @@ Shader "Hidden/Custom/GlitchEffect"
 				half4 finalColor;
 
 				// ase common template code
+				float2 uv_MainTex = i.uv.xy * _MainTex_ST.xy + _MainTex_ST.zw;
+				float4 tex2DNode137 = tex2D( _MainTex, uv_MainTex );
+				float4 color147 = IsGammaSpace() ? float4(0,0,0,0) : float4(0,0,0,0);
 				float4 screenPos = i.ase_texcoord4;
 				float4 ase_screenPosNorm = screenPos / screenPos.w;
 				ase_screenPosNorm.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_screenPosNorm.z : ase_screenPosNorm.z * 0.5 + 0.5;
-				float4 appendResult28 = (float4(( ( sin( ( ( ase_screenPosNorm.y * 50.0 ) + _Time.y ) ) * 0.0 ) + ase_screenPosNorm.x ) , ase_screenPosNorm.y , 0.0 , 0.0));
-				float4 screenColor17 = UNITY_SAMPLE_SCREENSPACE_TEXTURE(_GrabTexture,appendResult28.xy);
+				float mulTime76 = _Time.y * _NoiseTimeScale;
+				float2 temp_cast_0 = (( ase_screenPosNorm.y + ( mulTime76 * _TimeMult ) )).xx;
+				float simplePerlin2D93 = snoise( temp_cast_0*_NoiseScale );
+				simplePerlin2D93 = simplePerlin2D93*0.5 + 0.5;
+				float mulTime102 = _Time.y * _FlickerTimescale;
+				float2 temp_cast_1 = (( mulTime102 * _Flickeringmult )).xx;
+				float simplePerlin2D100 = snoise( temp_cast_1*1.66 );
+				simplePerlin2D100 = simplePerlin2D100*0.5 + 0.5;
+				float temp_output_105_0 = ( simplePerlin2D100 * simplePerlin2D100 );
+				float4 lerpResult143 = lerp( color147 , tex2DNode137 , ( (-1.0 + (simplePerlin2D93 - 0.0) * (1.0 - -1.0) / (1.0 - 0.0)) * ( ( temp_output_105_0 * temp_output_105_0 ) * _ModFlickereffect ) ));
+				float4 lerpResult140 = lerp( tex2DNode137 , lerpResult143 , _ScreenBlend);
 				
 
-				finalColor = screenColor17;
+				finalColor = lerpResult140;
 
 				return finalColor;
 			} 
@@ -118,45 +166,62 @@ Shader "Hidden/Custom/GlitchEffect"
 }
 /*ASEBEGIN
 Version=18900
-8;31;1904;980;1121.581;337.1729;1.411715;True;True
-Node;AmplifyShaderEditor.ScreenPosInputsNode;15;-493.2526,-251.7965;Float;False;0;False;0;5;FLOAT4;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
-Node;AmplifyShaderEditor.RangedFloatNode;20;-451.6117,133.2676;Inherit;False;Constant;_Frecuency;Frecuency;0;0;Create;True;0;0;0;False;0;False;50;0;0;0;0;1;FLOAT;0
-Node;AmplifyShaderEditor.BreakToComponentsNode;18;-445.5626,-11.90795;Inherit;False;FLOAT4;1;0;FLOAT4;0,0,0,0;False;16;FLOAT;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4;FLOAT;5;FLOAT;6;FLOAT;7;FLOAT;8;FLOAT;9;FLOAT;10;FLOAT;11;FLOAT;12;FLOAT;13;FLOAT;14;FLOAT;15
-Node;AmplifyShaderEditor.SimpleMultiplyOpNode;21;-283.4508,61.8898;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.SimpleTimeNode;19;-236.2689,162.3021;Inherit;False;1;0;FLOAT;1;False;1;FLOAT;0
-Node;AmplifyShaderEditor.SimpleAddOpNode;22;-118.9192,69.14856;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.SinOpNode;23;44.40287,52.21146;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.RangedFloatNode;25;5.6895,225.2118;Inherit;False;Constant;_JitterStrength;_JitterStrength;0;0;Create;True;0;0;0;False;0;False;0;0;0;0;0;1;FLOAT;0
-Node;AmplifyShaderEditor.SimpleMultiplyOpNode;24;239.1795,69.14853;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.SimpleAddOpNode;27;354.4821,-186.0785;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.DynamicAppendNode;28;495.8115,-68.69553;Inherit;False;FLOAT4;4;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT;0;False;3;FLOAT;0;False;1;FLOAT4;0
-Node;AmplifyShaderEditor.CommentaryNode;29;-588.9844,396.0595;Inherit;False;1597.6;476;RGB DRIFT;6;35;37;39;40;41;43;;1,1,1,1;0;0
-Node;AmplifyShaderEditor.ScreenColorNode;17;644.3329,-202.616;Inherit;False;Global;_GrabScreen0;Grab Screen 0;0;0;Create;True;0;0;0;False;0;False;Object;-1;False;False;False;2;0;FLOAT2;0,0;False;1;FLOAT;0;False;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
-Node;AmplifyShaderEditor.RangedFloatNode;40;-503.0126,650.0312;Inherit;False;Constant;_Velocity;_Velocity;0;0;Create;True;0;0;0;False;0;False;2;0;0;0;0;1;FLOAT;0
-Node;AmplifyShaderEditor.SimpleTimeNode;35;-521.7849,565.8594;Inherit;False;1;0;FLOAT;1;False;1;FLOAT;0
-Node;AmplifyShaderEditor.SimpleMultiplyOpNode;41;-334.0126,565.0312;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.SinOpNode;39;-104.0126,478.0312;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.SimpleMultiplyOpNode;43;135.9874,545.0312;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.RangedFloatNode;37;-137.1846,634.0596;Inherit;False;Constant;_DriftAmount;_DriftAmount;0;0;Create;True;0;0;0;False;0;False;0.005;0;0;0;0;1;FLOAT;0
-Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;2;856.3868,-191.2326;Float;False;True;-1;2;ASEMaterialInspector;0;2;Hidden/Custom/GlitchEffect;c71b220b631b6344493ea3cf87110c93;True;SubShader 0 Pass 0;0;0;SubShader 0 Pass 0;1;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;2;False;-1;False;False;False;False;False;False;False;False;False;False;False;True;2;False;-1;True;7;False;-1;False;True;0;False;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;2;0;;0;0;Standard;0;0;1;True;False;;False;0
-WireConnection;18;0;15;0
-WireConnection;21;0;18;1
-WireConnection;21;1;20;0
-WireConnection;22;0;21;0
-WireConnection;22;1;19;0
-WireConnection;23;0;22;0
-WireConnection;24;0;23;0
-WireConnection;24;1;25;0
-WireConnection;27;0;24;0
-WireConnection;27;1;15;1
-WireConnection;28;0;27;0
-WireConnection;28;1;18;1
-WireConnection;17;0;28;0
-WireConnection;41;0;35;0
-WireConnection;41;1;40;0
-WireConnection;39;0;41;0
-WireConnection;43;0;39;0
-WireConnection;43;1;37;0
-WireConnection;2;0;17;0
+8;474;1333;517;2178.666;286.1037;1;True;False
+Node;AmplifyShaderEditor.CommentaryNode;108;-3976.228,313.2101;Inherit;False;1748.15;395.16;Flickering;9;100;101;102;104;105;106;103;110;111;;1,1,1,1;0;0
+Node;AmplifyShaderEditor.CommentaryNode;99;-3687.115,-377.709;Inherit;False;1467.836;541.4775;Comment;9;67;91;95;96;93;97;98;76;72;;1,1,1,1;0;0
+Node;AmplifyShaderEditor.RangedFloatNode;103;-3913.228,475.9101;Inherit;False;Property;_FlickerTimescale;Flicker Time scale;5;0;Create;True;0;0;0;False;0;False;1;1;0;0;0;1;FLOAT;0
+Node;AmplifyShaderEditor.SimpleTimeNode;102;-3731.228,470.2101;Inherit;False;1;0;FLOAT;1;False;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;104;-3669.228,593.2101;Inherit;False;Property;_Flickeringmult;Flickering mult;4;0;Create;True;0;0;0;False;0;False;3;3;0;0;0;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;72;-3637.115,-47.10312;Inherit;False;Property;_NoiseTimeScale;Noise Time Scale;0;0;Create;True;0;0;0;False;0;False;1;1;0;2;0;1;FLOAT;0
+Node;AmplifyShaderEditor.SimpleTimeNode;76;-3349.753,-41.9599;Inherit;False;1;0;FLOAT;1;False;1;FLOAT;0
+Node;AmplifyShaderEditor.SimpleMultiplyOpNode;101;-3469.228,474.2101;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;91;-3344.609,48.60892;Inherit;False;Property;_TimeMult;Time Mult;2;0;Create;True;0;0;0;False;0;False;4;4;0;0;0;1;FLOAT;0
+Node;AmplifyShaderEditor.ScreenPosInputsNode;67;-3252.109,-301.3087;Float;False;0;False;0;5;FLOAT4;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
+Node;AmplifyShaderEditor.SimpleMultiplyOpNode;96;-3139.609,-50.39106;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.NoiseGeneratorNode;100;-3214.227,372.2101;Inherit;True;Simplex2D;True;False;2;0;FLOAT2;0,0;False;1;FLOAT;1.66;False;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;97;-2941.609,-96.39105;Inherit;False;Property;_NoiseScale;Noise Scale;3;0;Create;True;0;0;0;False;0;False;10;10;0;0;0;1;FLOAT;0
+Node;AmplifyShaderEditor.SimpleAddOpNode;95;-2984.609,-246.3913;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.SimpleMultiplyOpNode;105;-2955.228,366.2101;Inherit;True;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.NoiseGeneratorNode;93;-2749.609,-228.3913;Inherit;True;Simplex2D;True;False;2;0;FLOAT2;0,0;False;1;FLOAT;1;False;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;111;-2561.179,614.4936;Inherit;False;Property;_ModFlickereffect;Mod Flicker effect;6;0;Create;True;0;0;0;False;0;False;0.3529412;0.3529412;0;1;0;1;FLOAT;0
+Node;AmplifyShaderEditor.SimpleMultiplyOpNode;106;-2718.228,363.2101;Inherit;True;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.TemplateShaderPropertyNode;136;-2108.449,-313.6211;Inherit;False;0;0;_MainTex;Shader;False;0;5;SAMPLER2D;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
+Node;AmplifyShaderEditor.TFHCRemapNode;98;-2510.609,-223.3913;Inherit;True;5;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT;1;False;3;FLOAT;-1;False;4;FLOAT;1;False;1;FLOAT;0
+Node;AmplifyShaderEditor.SimpleMultiplyOpNode;110;-2457.685,372.8864;Inherit;True;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.SimpleMultiplyOpNode;109;-2063.684,142.6514;Inherit;True;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.ColorNode;147;-1791.119,-488.2528;Inherit;False;Constant;_Color0;Color 0;3;0;Create;True;0;0;0;False;0;False;0,0,0,0;0,0,0,0;True;0;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
+Node;AmplifyShaderEditor.SamplerNode;137;-1987.64,-325.2358;Inherit;True;Property;_TextureSample0;Texture Sample 0;3;0;Create;True;0;0;0;False;0;False;-1;None;None;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;8;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;6;FLOAT;0;False;7;SAMPLERSTATE;;False;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
+Node;AmplifyShaderEditor.RangedFloatNode;135;-1476.424,-59.96317;Inherit;False;Property;_ScreenBlend;Screen Blend;1;0;Create;True;0;0;0;False;0;False;0;0;0;1;0;1;FLOAT;0
+Node;AmplifyShaderEditor.LerpOp;143;-1538.679,-298.9659;Inherit;True;3;0;COLOR;0,0,0,0;False;1;COLOR;0,0,0,0;False;2;FLOAT;0;False;1;COLOR;0
+Node;AmplifyShaderEditor.LerpOp;140;-1222.955,-367.2068;Inherit;True;3;0;COLOR;0,0,0,0;False;1;COLOR;0,0,0,0;False;2;FLOAT;0;False;1;COLOR;0
+Node;AmplifyShaderEditor.TemplateMultiPassMasterNode;2;-955.7296,-368.7605;Float;False;True;-1;2;ASEMaterialInspector;0;2;GlitchEffectPostProcess;c71b220b631b6344493ea3cf87110c93;True;SubShader 0 Pass 0;0;0;SubShader 0 Pass 0;1;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;2;False;-1;False;False;False;False;False;False;False;False;False;False;False;True;2;False;-1;True;7;False;-1;False;True;0;False;0;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;2;0;;0;0;Standard;0;0;1;True;False;;False;0
+WireConnection;102;0;103;0
+WireConnection;76;0;72;0
+WireConnection;101;0;102;0
+WireConnection;101;1;104;0
+WireConnection;96;0;76;0
+WireConnection;96;1;91;0
+WireConnection;100;0;101;0
+WireConnection;95;0;67;2
+WireConnection;95;1;96;0
+WireConnection;105;0;100;0
+WireConnection;105;1;100;0
+WireConnection;93;0;95;0
+WireConnection;93;1;97;0
+WireConnection;106;0;105;0
+WireConnection;106;1;105;0
+WireConnection;98;0;93;0
+WireConnection;110;0;106;0
+WireConnection;110;1;111;0
+WireConnection;109;0;98;0
+WireConnection;109;1;110;0
+WireConnection;137;0;136;0
+WireConnection;143;0;147;0
+WireConnection;143;1;137;0
+WireConnection;143;2;109;0
+WireConnection;140;0;137;0
+WireConnection;140;1;143;0
+WireConnection;140;2;135;0
+WireConnection;2;0;140;0
 ASEEND*/
-//CHKSM=829AE944486AC0951F315CE4C853CC3EB20792E7
+//CHKSM=0BB1086D798BDD98AEC20C7B141F7912A6CD0745

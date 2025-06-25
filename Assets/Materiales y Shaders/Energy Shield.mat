@@ -31,6 +31,10 @@ Material:
         m_Texture: {fileID: 2800000, guid: e61a550a7ddc3304fbfe0a01919efe9c, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _flowmap:
+        m_Texture: {fileID: 2800000, guid: 6dbc61f513de43d46abb58e3ee860bb5, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _hexagon_grid:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -53,6 +57,7 @@ Material:
     - _Emissionboost: 1
     - _FallOff: 3
     - _FinalEdge: 0.5
+    - _HexIntensity: 2
     - _Metallic: 0
     - _PannerTime: 1
     - _PulseIntensity: 20
@@ -60,6 +65,7 @@ Material:
     - _RadialGlowCentralRadius: 0.5
     - _Range: 2
     - _Smoothness: 0
+    - _Speed: 0.2
     - __dirty: 0
     m_Colors:
     - _Edgecolor: {r: 1, g: 0.3820239, b: 0, a: 0}
