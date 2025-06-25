@@ -133,7 +133,7 @@ GameObject:
   - component: {fileID: 337963191}
   - component: {fileID: 337963195}
   m_Layer: 0
-  m_Name: Capsule
+  m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -255,7 +255,7 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 1
-  m_Constraints: 0
+  m_Constraints: 112
   m_CollisionDetection: 1
 --- !u!1 &705507993
 GameObject:
@@ -974,7 +974,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8703092596401788654, guid: d4ffc78dc27a08a4a9533f2fcfcce761, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 16.192
+      value: 4.11
       objectReference: {fileID: 0}
     - target: {fileID: 8703092596401788654, guid: d4ffc78dc27a08a4a9533f2fcfcce761, type: 3}
       propertyPath: m_LocalPosition.y
