@@ -23,8 +23,20 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
-    - _hexagon_grid:
+    - _Rock1_nmp:
+        m_Texture: {fileID: 2800000, guid: 42c12cb55ddd98245a0b2c96121c8a5a, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TextureSample0:
         m_Texture: {fileID: 2800000, guid: e61a550a7ddc3304fbfe0a01919efe9c, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _hexagon_grid:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _rock:
+        m_Texture: {fileID: 2800000, guid: 1d557bc533f5684438d25d03042b1025, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _texcoord:
@@ -33,14 +45,28 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Distance: 1
-    - _FallOff: 1
+    - _DepthRange: 0.94
+    - _Distance: 0.46
+    - _EdgePower: 3.96
+    - _EdgeScale: 2.51
+    - _EmissionBoost: 2
+    - _Emissionboost: 1
+    - _FallOff: 3
+    - _FinalEdge: 0.5
     - _Metallic: 0
     - _PannerTime: 1
-    - _Range: 1
+    - _PulseIntensity: 20
+    - _PulseRange: 0.95
+    - _RadialGlowCentralRadius: 0.5
+    - _Range: 2
     - _Smoothness: 0
     - __dirty: 0
     m_Colors:
+    - _Edgecolor: {r: 1, g: 0.3820239, b: 0, a: 0}
+    - _Hexcolor: {r: 1, g: 0.7276479, b: 0, a: 0}
     - _PannerSpeed: {r: 1, g: 0, b: 0, a: 0}
+    - _StepRange: {r: 0.05, g: 1, b: 0, a: 0}
+    - _TexturePannerSpeed: {r: 0.125, g: 0.2, b: 0, a: 0}
+    - _Tiling: {r: 2, g: 1.2, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
