@@ -19,6 +19,9 @@ namespace ScifiOffice {
         public float accelerationRate = 12f, crouchFactor = 0.5f, decelerationFactor = 1f;
         public float mouseSensitivity = 50f;
 
+        [Header("Audio")]
+        public AudioSource footstepsAudio;
+
         float xRot = 0f;
         float horizontalMovement;
         float verticalMovement;
@@ -81,15 +84,15 @@ namespace ScifiOffice {
 
                 case ControlType.keyboard:
                     //Get changes to look left and right only. Player cannot look up and down.
-                    mouseX = Input.GetAxis("Horizontal") * mouseSensitivity * Time.deltaTime;
+                    mouseX = Input.GetAxisRaw("Horizontal") * mouseSensitivity * Time.deltaTime;
                     mouseY = 0;
                     break;
 
                 default:
                 case ControlType.keyboardMouse:
                     //Use mouse to control where to look. Can look in all directions.
-                    mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
-                    mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
+                    mouseX = Input.GetAxisRaw("Mouse X") * mouseSensitivity * Time.deltaTime;
+                    mouseY = Input.GetAxisRaw("Mouse Y") * mouseSensitivity * Time.deltaTime;
                     break;
             }
 
@@ -138,6 +141,13 @@ namespace ScifiOffice {
                 if(rb.velocity.magnitude > maxSpeed) {
                     rb.velocity = rb.velocity.normalized * speed;
                 }
+
+                // Reproducir sonido de pasos si no está sonando
+                if (footstepsAudio != null && !footstepsAudio.isPlaying)
+                {
+                    footstepsAudio.loop = true;
+                    footstepsAudio.Play();
+                }
             } else {
                 // If no buttons are pressed, decelerate.
                 len = rb.velocity.magnitude;
@@ -145,6 +155,12 @@ namespace ScifiOffice {
                 if(len < decelRate) rb.velocity = Vector3.zero;
                 else {
                     rb.velocity -= rb.velocity.normalized * decelRate;
+                }
+
+                // Detener sonido de pasos si está sonando
+                if (footstepsAudio != null && footstepsAudio.isPlaying)
+                {
+                    footstepsAudio.Stop();
                 }
             }
         }
