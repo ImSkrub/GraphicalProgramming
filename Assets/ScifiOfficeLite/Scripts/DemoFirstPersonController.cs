@@ -23,8 +23,8 @@ namespace ScifiOffice {
         float horizontalMovement;
         float verticalMovement;
 
-        [Header("HUD")]
-        public GameObject canvas;      
+        //[Header("HUD")]
+        //public GameObject canvas;      
 
 
         private void Start() {
@@ -57,13 +57,13 @@ namespace ScifiOffice {
             else if (controlType == ControlType.android)
             {
                 //Show mobile controls
-                canvas.SetActive(true);
+                //canvas.SetActive(true);
             }
             else
             {
                 //Do not show mobile controls when using keyboard controls
                 Crouch();
-                canvas.SetActive(false);
+                //canvas.SetActive(false);
             }
 
 
