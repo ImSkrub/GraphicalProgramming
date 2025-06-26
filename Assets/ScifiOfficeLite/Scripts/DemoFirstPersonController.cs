@@ -123,13 +123,13 @@ namespace ScifiOffice {
 
                 case ControlType.keyboard:
                     //Only can move forward and back
-                    displacement = playerBody.transform.forward * Input.GetAxis("Vertical");
+                    displacement = playerBody.transform.forward * Input.GetAxisRaw("Vertical");
                     break;
 
                 case ControlType.keyboardMouse:
                 default:
                     //Move in 4 directions, this is the default control
-                    displacement = playerBody.transform.forward * Input.GetAxis("Vertical") + playerBody.transform.right * Input.GetAxis("Horizontal");
+                    displacement = playerBody.transform.forward * Input.GetAxisRaw("Vertical") + playerBody.transform.right * Input.GetAxisRaw("Horizontal");
                     break;
             }
 
