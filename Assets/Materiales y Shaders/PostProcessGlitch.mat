@@ -44,7 +44,7 @@ Material:
     - _Blend: 0.434
     - _FlickerTimescale: 1
     - _Flickeringmult: 3
-    - _ModFlickereffect: 0.3529412
+    - _ModFlickereffect: 0.58063245
     - _NoiseScale: 10
     - _NoiseScaleX: 1
     - _NoiseTimeScale: 1
