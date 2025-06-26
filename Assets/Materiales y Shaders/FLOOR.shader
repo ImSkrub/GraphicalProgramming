@@ -60,7 +60,7 @@ Shader "FLOOR"
 }
 /*ASEBEGIN
 Version=18900
-0;472;1383;527;2776.58;840.2419;2.802924;True;False
+0;476;1383;523;1606.47;512.2345;1;True;False
 Node;AmplifyShaderEditor.RangedFloatNode;11;-987.0063,501.3358;Inherit;False;Property;_Emissivescale;Emissive scale;4;0;Create;True;0;0;0;False;0;False;1;1;0;2;0;1;FLOAT;0
 Node;AmplifyShaderEditor.SimpleTimeNode;10;-819.0063,504.3358;Inherit;False;1;0;FLOAT;1;False;1;FLOAT;0
 Node;AmplifyShaderEditor.SamplerNode;2;-945.5351,225.9051;Inherit;True;Property;_d880Mat_emissive;d880Mat_emissive;1;0;Create;True;0;0;0;False;0;False;-1;70ed6f740c212dc4db79d40d3d843cc3;70ed6f740c212dc4db79d40d3d843cc3;True;0;False;white;Auto;False;Object;-1;Auto;Texture2D;8;0;SAMPLER2D;;False;1;FLOAT2;0,0;False;2;FLOAT;0;False;3;FLOAT2;0,0;False;4;FLOAT2;0,0;False;5;FLOAT;1;False;6;FLOAT;0;False;7;SAMPLERSTATE;;False;5;COLOR;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
@@ -85,4 +85,4 @@ WireConnection;0;2;14;0
 WireConnection;0;3;3;0
 WireConnection;0;4;3;0
 ASEEND*/
-//CHKSM=F51C6FBC132F56995A9014FE76333D9BFA8A147B
+//CHKSM=9C42D1A67FAD0F107D3807D1F01C10BA9A2CF53C
