@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: 1e71aa7c819d64949ac5a0943825845f
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures:
+  - _d880Mat_normal: {fileID: 2800000, guid: a86ba0b683e711a478efb9a02f8b90de, type: 3}
+  - _d880Mat_baseColor: {fileID: 2800000, guid: 490b35b0c3b72c7489de956fb4a919d7, type: 3}
+  - _d880Mat_emissive: {fileID: 2800000, guid: 70ed6f740c212dc4db79d40d3d843cc3, type: 3}
+  - _d880Mat_metallicRoughness: {fileID: 2800000, guid: a110d7e1a56f9e34cba5ad5230cf2661, type: 3}
+  nonModifiableTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
