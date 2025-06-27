@@ -91,8 +91,8 @@ namespace ScifiOffice {
                 default:
                 case ControlType.keyboardMouse:
                     //Use mouse to control where to look. Can look in all directions.
-                    mouseX = Input.GetAxisRaw("Mouse X") * mouseSensitivity * Time.deltaTime;
-                    mouseY = Input.GetAxisRaw("Mouse Y") * mouseSensitivity * Time.deltaTime;
+                    mouseX = Input.GetAxisRaw("Mouse X") * mouseSensitivity;
+                    mouseY = Input.GetAxisRaw("Mouse Y") * mouseSensitivity;
                     break;
             }
 
