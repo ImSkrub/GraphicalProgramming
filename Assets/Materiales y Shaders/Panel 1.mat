@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Panel 1
+  m_Shader: {fileID: 4800000, guid: 7955ae90236ece64ab97ab920830b817, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _sci_fi4_Displacement:
+        m_Texture: {fileID: 2800000, guid: c9f38e0d829f4234894d911c4658127d, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _sci_fi_4_Ambient:
+        m_Texture: {fileID: 2800000, guid: 20e7ed27da426144fa82e2500e108c77, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _sci_fi_4_BaseColor:
+        m_Texture: {fileID: 2800000, guid: 166e9d22c709e6b4d802a3e0a28c84e5, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _sci_fi_4_Emissive:
+        m_Texture: {fileID: 2800000, guid: 3dc6f01f3d3ebf04db821654637d4437, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _sci_fi_4_Metallic:
+        m_Texture: {fileID: 2800000, guid: cbdeff1ef137dff41a0168b12c078c8a, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _sci_fi_4_Normal:
+        m_Texture: {fileID: 2800000, guid: 61996249d13959c4f934eba20f08c80d, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _sci_fi_4_Roughness:
+        m_Texture: {fileID: 2800000, guid: 92d96824ce3a3aa45b08aaf9ed234d6f, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _texcoord:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _EdgeLength: 15
+    - _TransAmbient: 0.2
+    - _TransDirect: 1
+    - _TransNormalDistortion: 0.1
+    - _TransScattering: 2
+    - _TransShadow: 0.9
+    - _Translucency: 1
+    - __dirty: 0
+    m_Colors: []
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1
