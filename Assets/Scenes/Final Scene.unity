@@ -24660,10 +24660,6 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5585376127714893934, guid: 1be5c4e96fd87f64ea77d5af3b91d134, type: 3}
-      propertyPath: m_UseGravity
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5585376127714893934, guid: 1be5c4e96fd87f64ea77d5af3b91d134, type: 3}
       propertyPath: m_Constraints
       value: 112
       objectReference: {fileID: 0}
@@ -24731,8 +24727,7 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 3056620285496010318, guid: 1be5c4e96fd87f64ea77d5af3b91d134, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:

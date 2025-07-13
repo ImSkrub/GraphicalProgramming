@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 467295086962146243}
   - component: {fileID: 8941866940256421330}
   - component: {fileID: 5585376127714893934}
-  - component: {fileID: 3056620285496010318}
+  - component: {fileID: 5165994082956955201}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -134,12 +134,12 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 0
+  m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 1
+  m_Interpolate: 0
   m_Constraints: 112
-  m_CollisionDetection: 1
---- !u!114 &3056620285496010318
+  m_CollisionDetection: 0
+--- !u!114 &5165994082956955201
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -148,17 +148,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 711326663903915607}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1ecdae056ad6f954496b395d7469d96e, type: 3}
+  m_Script: {fileID: 11500000, guid: 578db567233ce68478090a40f970d2ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerBody: {fileID: 0}
-  controlType: 0
-  speed: 3
-  accelerationRate: 12
-  crouchFactor: 0.5
-  decelerationFactor: 1
-  mouseSensitivity: 2
-  footstepsAudio: {fileID: 0}
+  speed: 200
 --- !u!1 &2167555670524811232
 GameObject:
   m_ObjectHideFlags: 0
@@ -170,8 +163,7 @@ GameObject:
   - component: {fileID: 4087979023351991274}
   - component: {fileID: 8910627050539584597}
   - component: {fileID: 7702438808770933348}
-  - component: {fileID: 3471672488433315144}
-  - component: {fileID: 5170191696472642874}
+  - component: {fileID: 7879275353380652988}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -253,7 +245,7 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2167555670524811232}
   m_Enabled: 1
---- !u!114 &3471672488433315144
+--- !u!114 &7879275353380652988
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -262,27 +254,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 2167555670524811232}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1ecdae056ad6f954496b395d7469d96e, type: 3}
+  m_Script: {fileID: 11500000, guid: f0d54837781941f49b747517ae661fee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerBody: {fileID: 6780944108860308774}
-  controlType: 2
-  speed: 5
-  accelerationRate: 12
-  crouchFactor: 0.5
-  decelerationFactor: 1
-  mouseSensitivity: 25
-  footstepsAudio: {fileID: 0}
---- !u!114 &5170191696472642874
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2167555670524811232}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c2b32d280aeef154da45ad7569231f2c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  glitchMaterial: {fileID: 2100000, guid: 6ded0e9098df3744a9f78d0c37b6ea71, type: 2}
+  offSetY: 0
+  sensitivity: 200
