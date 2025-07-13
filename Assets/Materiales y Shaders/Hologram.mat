@@ -29,16 +29,19 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Direction: -2
-    - _Float0: 0.89
-    - _Float1: 2.48
-    - _Frecuency: 1.17
+    - _Direction: -1
+    - _Float0: 0.8
+    - _Float1: 2.5
+    - _Frecuency: 1.5
     - _Frecuency2: 2
     - _FresnelScale: 1.5
     - _Fresnelpower: 2
-    - _Speed: 0.33
+    - _NegTimeScale: -1
+    - _NegTimeScale1: -2
+    - _PosTimeScale: 1.600433
+    - _Speed: 0.77705884
     - _Speed2: 0.5
-    - _Thickness: 0.0771
+    - _Thickness: 0.050588235
     - __dirty: 0
     m_Colors: []
   m_BuildTextureStacks: []
