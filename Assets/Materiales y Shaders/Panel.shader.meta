@@ -8,7 +8,6 @@ ShaderImporter:
   - _sci_fi_4_Emissive: {fileID: 2800000, guid: 3dc6f01f3d3ebf04db821654637d4437, type: 3}
   - _sci_fi_4_Metallic: {fileID: 2800000, guid: cbdeff1ef137dff41a0168b12c078c8a, type: 3}
   - _sci_fi_4_Roughness: {fileID: 2800000, guid: 92d96824ce3a3aa45b08aaf9ed234d6f, type: 3}
-  - _sci_fi_4_Ambient: {fileID: 2800000, guid: 20e7ed27da426144fa82e2500e108c77, type: 3}
   - _sci_fi4_Displacement: {fileID: 2800000, guid: c9f38e0d829f4234894d911c4658127d, type: 3}
   nonModifiableTextures: []
   userData: 

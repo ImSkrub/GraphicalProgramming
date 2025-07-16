@@ -41,7 +41,7 @@ Material:
     - _PosTimeScale: 1.600433
     - _Speed: 0.77705884
     - _Speed2: 0.5
-    - _Thickness: 0.050588235
+    - _Thickness: 0.1
     - __dirty: 0
     m_Colors: []
   m_BuildTextureStacks: []

@@ -1,11 +1,11 @@
 using UnityEngine;
-
 public class Player : MonoBehaviour
 {
     private PlayerCamera1 playerCamera;
     private Rigidbody rb;
 
     [SerializeField] private float speed;
+    [SerializeField] AudioSource footstepsAudio;
 
 
     void Awake()
@@ -23,6 +23,7 @@ public class Player : MonoBehaviour
     {
         playerCamera = GetComponentInChildren<PlayerCamera1>();
         rb = GetComponent<Rigidbody>();
+        footstepsAudio = GetComponent<AudioSource>();
     }
 
     private void Movement()
@@ -32,8 +33,25 @@ public class Player : MonoBehaviour
         cameraForward.Normalize();
 
         Vector3 right = playerCamera.transform.right;
-        Vector3 movement = (cameraForward * Input.GetAxisRaw("Vertical") + right * Input.GetAxisRaw("Horizontal")).normalized * speed * Time.fixedDeltaTime;
+        Vector3 input = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
+        Vector3 movement = (cameraForward * input.z + right * input.x).normalized * speed * Time.fixedDeltaTime;
 
         rb.velocity = new Vector3(movement.x, rb.velocity.y, movement.z);
+
+        // Efecto de sonido de pisadas
+        if (input.magnitude > 0.1f)
+        {
+            if (!footstepsAudio.isPlaying)
+            {
+                footstepsAudio.Play();
+            }
+        }
+        else
+        {
+            if (footstepsAudio.isPlaying)
+            {
+                footstepsAudio.Stop();
+            }
+        }
     }
 }
