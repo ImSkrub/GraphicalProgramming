@@ -31,17 +31,17 @@ Material:
     m_Floats:
     - _Direction: -1
     - _Float0: 0.8
-    - _Float1: 2.5
-    - _Frecuency: 1.5
+    - _Float1: 2.8
+    - _Frecuency: 1.9
     - _Frecuency2: 2
     - _FresnelScale: 1.5
     - _Fresnelpower: 2
     - _NegTimeScale: -1
     - _NegTimeScale1: -2
     - _PosTimeScale: 1.600433
-    - _Speed: 0.77705884
+    - _Speed: 0.35
     - _Speed2: 0.5
-    - _Thickness: 0.1
+    - _Thickness: 0.055
     - __dirty: 0
     m_Colors: []
   m_BuildTextureStacks: []
